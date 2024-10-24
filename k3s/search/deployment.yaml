@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search
+  template:
+    metadata:
+      labels:
+        app: search
+    spec:
+      containers:
+        - name: search
+          image: hilalseyhann/search:latest
+          ports:
+            - containerPort: 5004
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://bbuser:bbuser@postgres-db:5432/cloud_harmony_db"

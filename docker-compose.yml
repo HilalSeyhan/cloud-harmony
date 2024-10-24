@@ -1,0 +1,138 @@
+services:
+  database:
+    build: ./database
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: bbuser
+      POSTGRES_PASSWORD: bbuser
+      POSTGRES_DB: cloud_harmony_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - cloud-harmony-network
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    container_name: cloud-harmony-api-gateway
+    image: hilalseyhann/api-gateway:latest
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+      - auth
+      - user-profile
+      - music-catalog
+      - music-streaming
+      - search
+    volumes:
+      - ./api-gateway:/app
+
+  auth:
+    build:
+      context: .
+      dockerfile: ./services/auth/Dockerfile
+    container_name: cloud-harmony-auth
+    image: hilalseyhann/authentication:latest
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+    ports:
+      - "5005:5000"
+    depends_on:
+      - database
+    volumes:
+      - ./services/auth:/app
+
+  user-profile:
+    build:
+      context: .
+      dockerfile: ./services/user-profile/Dockerfile
+    container_name: cloud-harmony-user-profile
+    image: hilalseyhann/user-profile:latest
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+    ports:
+      - "5004:5000"
+    depends_on:
+      - database
+    volumes:
+      - ./services/user-profile:/app
+
+  music-catalog:
+    build:
+      context: .
+      dockerfile: ./services/music-catalog/Dockerfile
+    container_name: cloud-harmony-music-catalog
+    image: hilalseyhann/music-catalog:latest
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+    ports:
+      - "5002:5000"
+    depends_on:
+      - database
+    volumes:
+      - ./services/music-catalog:/app
+
+  music-streaming:
+    build:
+      context: .
+      dockerfile: ./services/music-streaming/Dockerfile
+    container_name: cloud-harmony-music-streaming
+    image: hilalseyhann/music-stream:latest
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+    ports:
+      - "5003:5000"
+    depends_on:
+      - database
+    volumes:
+      - ./services/music-streaming:/app
+
+  search:
+    build:
+      context: .
+      dockerfile: ./services/search/Dockerfile
+    container_name: cloud-harmony-search
+    image: hilalseyhann/search:latest
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+    ports:
+      - "5006:5000"
+    depends_on:
+      - database
+    volumes:
+      - ./services/search:/app
+
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+  
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+networks:
+  cloud-harmony-network:
+
+volumes:
+  db_data:

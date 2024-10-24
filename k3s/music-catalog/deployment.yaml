@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-catalog
+  template:
+    metadata:
+      labels:
+        app: music-catalog
+    spec:
+      containers:
+        - name: music-catalog
+          image: hilalseyhann/music-catalog:latest
+          ports:
+            - containerPort: 5003
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://bbuser:bbuser@postgres-db:5432/cloud_harmony_db"

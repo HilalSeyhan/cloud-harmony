@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-stream
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-stream
+  template:
+    metadata:
+      labels:
+        app: music-stream
+    spec:
+      containers:
+        - name: music-stream
+          image: hilalseyhann/music-stream:latest
+          ports:
+            - containerPort: 5002
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://bbuser:bbuser@postgres-db:5432/cloud_harmony_db"

@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'cloud-harmony'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: 
+          - 'cloud-harmony-api-gateway:5000'
+          - 'cloud-harmony-auth:5000'
+          - 'cloud-harmony-user-profile:5000'
+          - 'cloud-harmony-music-catalog:5000'
+          - 'cloud-harmony-music-streaming:5000'
+          - 'cloud-harmony-search:5000'

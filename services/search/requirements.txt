@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+flask_migrate
+psycopg2-binary
+flask_restful
+python-dotenv
+elasticsearch
+prometheus_flask_exporter
